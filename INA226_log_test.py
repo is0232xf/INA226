@@ -1,43 +1,47 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import csv
+import time
 import datetime
 import signal
 from INA226 import INA226
 
 i2c_addr = 0x40
-ina226 = INA226(i2c_addr))
-V, C, P = []
-count = 0
-
+ina226 = INA226(i2c_addr)
+V = []
+C = []
+P = []
 ina226.initial_operation()
 
-def make_log_file(filename):
+def make_log_file():
     detail = datetime.datetime.now()
     date = detail.strftime("%Y%m%d%H%M%S")
     filename = './csv/'+ date +'.csv'
     file = open(filename, 'a', newline='')
     csvWriter = csv.writer(file)
-    csvWriter.writerow(['count', 'V', 'C', 'P'])
+    csvWriter.writerow(['unix time', 'V', 'C', 'P'])
     return file, csvWriter
 
-def logging(csvWriter):
-    count = count + 0.1
+def logging(arg1, arg2):
+    unix_time = int(time.time()*1000)
     v = ina226.get_voltage()
     c = ina226.get_current()
     p = ina226.get_power()
 
-    csvWriter.writerow([count, v, c, p])
+    csvWriter.writerow([unix_time, v, c, p])
 
 def kill_signal_process(arg1, args2):
     pass
 
+file, csvWriter = make_log_file()
+
 if __name__ == '__main__':
-    file, csvWriter = make_log_file(filename)
 
     try:
-        signal.signal(signal.SIGALRM, logging(csvWriter))
-        signal.setitimer(signal.ITIMER_REAL, 0.5, 0.1)
+        signal.signal(signal.SIGALRM, logging)
+        signal.setitimer(signal.ITIMER_REAL, 1.0, 0.1)
+        while True:
+            pass
 
     except KeyboardInterrupt:
         file.close()
