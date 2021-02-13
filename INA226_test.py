@@ -4,6 +4,8 @@ from INA226 import INA226
 i2c_addr = 0x40
 ina226 = INA226(i2c_addr)
 
+ina226.initial_operation()
+
 while True:
     v = ina226.get_voltage()
     c = ina226.get_current()

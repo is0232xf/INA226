@@ -18,8 +18,8 @@ class INA226:
         self.current = 0.0
         self.power = 0.0
 
-    def inital_operation(self):
-        self.i2c.write_i2c_block_data(SENSOR_ADDR, CALIBRATION_REGISTER, [0x0a, 0x00])
+    def initial_operation(self):
+        self.i2c.write_i2c_block_data(self.SENSOR_ADDR, self.CALIBRATION_REGISTER, [0x0a, 0x00])
 
     def bit_operation(self, bit_data):
         result = ( (bit_data << 8) & 0xFF00 ) + (bit_data >> 8)
